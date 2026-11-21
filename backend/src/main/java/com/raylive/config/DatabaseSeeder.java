@@ -2,15 +2,19 @@ package com.raylive.config;
 
 import com.raylive.entity.Agent;
 import com.raylive.entity.Property;
+import com.raylive.entity.User;
 import com.raylive.entity.enums.ListingType;
 import com.raylive.entity.enums.PropertyStatus;
 import com.raylive.entity.enums.PropertyType;
 import com.raylive.entity.enums.RentFrequency;
+import com.raylive.entity.enums.UserRole;
 import com.raylive.repository.AgentRepository;
 import com.raylive.repository.PropertyRepository;
+import com.raylive.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,12 +25,48 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final PropertyRepository propertyRepository;
     private final AgentRepository agentRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
+        // 1. Seed Demo Users for Authentication
+        if (userRepository.count() == 0) {
+            String encodedPass = passwordEncoder.encode("password123");
+
+            User buyer = User.builder()
+                    .name("Demo Buyer")
+                    .email("buyer@raylive.in")
+                    .password(encodedPass)
+                    .phone("+91 98765 00001")
+                    .role(UserRole.BUYER)
+                    .avatarUrl("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80")
+                    .build();
+
+            User owner = User.builder()
+                    .name("Demo Owner")
+                    .email("owner@raylive.in")
+                    .password(encodedPass)
+                    .phone("+91 98765 00002")
+                    .role(UserRole.OWNER)
+                    .avatarUrl("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80")
+                    .build();
+
+            User agent = User.builder()
+                    .name("Demo Agent")
+                    .email("agent@raylive.in")
+                    .password(encodedPass)
+                    .phone("+91 98765 00003")
+                    .role(UserRole.AGENT)
+                    .avatarUrl("https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80")
+                    .build();
+
+            userRepository.saveAll(List.of(buyer, owner, agent));
+        }
+
         if (agentRepository.count() > 0) return;
 
-        // 1. Seed Agents
+        // 2. Seed Agents
         Agent rajesh = Agent.builder()
                 .name("Rajesh Malhotra")
                 .email("rajesh.m@raylive.in")
@@ -59,7 +99,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         agentRepository.saveAll(List.of(rajesh, pooja));
 
-        // 2. Seed Initial Properties
+        // 3. Seed Initial Properties
         Property p1 = Property.builder()
                 .title("Prestige Lakeside Luxury Residences")
                 .description("Ultra-luxury 3 BHK apartment overlooking the serene lake with Italian marble and smart home controls.")

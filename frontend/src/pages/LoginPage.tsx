@@ -54,8 +54,8 @@ export const LoginPage: React.FC = () => {
 
       // Redirect user back to the property or target page
       navigate(redirectPath, { replace: true });
-    } catch {
-      setErrorMessage('Authentication failed. Please verify your details.');
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'Authentication failed. Please verify your details.');
     } finally {
       setLoading(false);
     }
