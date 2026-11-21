@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build Outputs
+dist/
+dist-ssr/
+*.local
+target/
+*.class
+
+# Environment Variables & Secrets
+.env
+.env.*.local
+*.log
+
+# Editor & IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper binaries
+backend/.mvn/wrapper/maven-wrapper.jar
