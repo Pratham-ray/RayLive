@@ -8,11 +8,13 @@ import com.raylive.entity.Property;
 import com.raylive.entity.enums.PropertyStatus;
 import com.raylive.repository.AgentRepository;
 import com.raylive.repository.PropertyRepository;
+import com.raylive.repository.PropertySpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,8 @@ public class PropertyService {
 
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
-        Page<Property> propertiesPage = propertyRepository.searchProperties(
+        // Use JPA Specification to avoid lower(bytea) PostgreSQL bug with enum null params
+        Specification<Property> spec = PropertySpecification.buildSearch(
                 criteria.getListingType(),
                 criteria.getPropertyType(),
                 criteria.getCity(),
@@ -49,11 +52,11 @@ public class PropertyService {
                 criteria.getMinPrice(),
                 criteria.getMaxPrice(),
                 criteria.getBedrooms(),
-                PropertyStatus.AVAILABLE,
-                pageable
+                criteria.getFurnishingStatus(),
+                PropertyStatus.AVAILABLE
         );
 
-        return propertiesPage.map(this::convertToDTO);
+        return propertyRepository.findAll(spec, pageable).map(this::convertToDTO);
     }
 
     @Transactional(readOnly = true)

@@ -51,9 +51,40 @@ public class PostgresDataSourceConfig {
                 String dbName = (path != null && path.length() > 1) ? path.substring(1) : "raylive_db";
 
                 String query = uri.getQuery();
-                String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
+
+                // Check if host resolves via standard OS DNS; if local ISP router refuses it, resolve via Google DNS 8.8.8.8
+                String targetHost = host;
+                try {
+                    java.net.InetAddress.getByName(host);
+                } catch (java.net.UnknownHostException e) {
+                    log.warn("Local OS DNS refused resolution for {}, resolving via Google Public DNS 8.8.8.8...", host);
+                    try {
+                        java.util.Hashtable<String, String> jndiEnv = new java.util.Hashtable<>();
+                        jndiEnv.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
+                        jndiEnv.put(javax.naming.Context.PROVIDER_URL, "dns://8.8.8.8");
+                        javax.naming.directory.DirContext ictx = new javax.naming.directory.InitialDirContext(jndiEnv);
+                        javax.naming.directory.Attributes attrs = ictx.getAttributes(host, new String[]{"A"});
+                        javax.naming.directory.Attribute a = attrs.get("A");
+                        if (a != null) {
+                            targetHost = (String) a.get();
+                            log.info("Successfully resolved {} -> {} via Google DNS fallback", host, targetHost);
+                            String endpointName = host.split("\\.")[0];
+                            config.addDataSourceProperty("options", "endpoint=" + endpointName);
+                        }
+                    } catch (Exception ex) {
+                        log.error("Failed Google DNS fallback lookup: {}", ex.getMessage());
+                    }
+                }
+
+                String jdbcUrl = "jdbc:postgresql://" + targetHost + ":" + port + "/" + dbName;
                 if (StringUtils.hasText(query)) {
-                    jdbcUrl += "?" + query;
+                    // Clean query for pgjdbc compatibility (strip channel_binding if present as pooler terminates TLS)
+                    String cleanedQuery = query.replaceAll("channel_binding=[^&]*&?", "").replaceAll("&$", "");
+                    if (StringUtils.hasText(cleanedQuery)) {
+                        jdbcUrl += "?" + cleanedQuery;
+                    } else {
+                        jdbcUrl += "?sslmode=require";
+                    }
                 } else {
                     jdbcUrl += "?sslmode=require";
                 }

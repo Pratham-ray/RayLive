@@ -36,12 +36,12 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // Allows H2 console
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",
-                                "/api/properties/**",
-                                "/api/ai-broker/**",
-                                "/api/agents/**",
-                                "/api/inquiries/**",
-                                "/api/users/**",
+                                "/api/auth", "/api/auth/**",
+                                "/api/properties", "/api/properties/**",
+                                "/api/ai-broker", "/api/ai-broker/**",
+                                "/api/agents", "/api/agents/**",
+                                "/api/inquiries", "/api/inquiries/**",
+                                "/api/users", "/api/users/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
