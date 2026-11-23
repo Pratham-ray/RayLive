@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/api/ai-broker/**",
                                 "/api/agents/**",
                                 "/api/inquiries/**",
+                                "/api/users/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

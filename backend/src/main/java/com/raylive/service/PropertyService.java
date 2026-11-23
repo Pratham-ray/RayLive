@@ -28,6 +28,7 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final AgentRepository agentRepository;
+    private final com.raylive.repository.UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public Page<PropertyDTO> search(PropertySearchCriteria criteria) {
@@ -76,6 +77,11 @@ public class PropertyService {
     public PropertyDTO create(PropertyCreateDTO dto) {
         Agent defaultAgent = agentRepository.findAll().stream().findFirst().orElse(null);
 
+        com.raylive.entity.User owner = null;
+        if (dto.getContactEmail() != null && !dto.getContactEmail().isBlank()) {
+            owner = userRepository.findByEmail(dto.getContactEmail().trim()).orElse(null);
+        }
+
         Property property = Property.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
@@ -106,6 +112,7 @@ public class PropertyService {
                         "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80"
                 ))
                 .agent(defaultAgent)
+                .owner(owner)
                 .status(PropertyStatus.AVAILABLE)
                 .verified(false) // Pending admin review
                 .featured(false)

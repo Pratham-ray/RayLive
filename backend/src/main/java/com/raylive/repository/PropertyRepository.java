@@ -53,4 +53,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
             @Param("excludeId") Long excludeId,
             Pageable pageable
     );
+
+    List<Property> findByIdIn(java.util.Collection<Long> ids);
+
+    @Query("SELECT p FROM Property p WHERE (p.owner IS NOT NULL AND p.owner.id = :userId) OR (p.owner IS NOT NULL AND p.owner.email = :email) ORDER BY p.createdAt DESC")
+    List<Property> findUserProperties(@Param("userId") Long userId, @Param("email") String email);
 }

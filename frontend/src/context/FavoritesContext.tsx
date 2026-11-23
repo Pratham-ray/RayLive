@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { UserAPI } from '../services/api';
 
 interface FavoritesContextType {
   favorites: number[];
@@ -14,15 +15,16 @@ interface FavoritesContextType {
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
 export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [favorites, setFavorites] = useState<number[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Storage key is user-specific if logged in, otherwise guest
   const storageKey = user ? `raylive_favs_${user.email}` : 'raylive_favs_guest';
 
-  // Load favorites whenever active user changes
+  // Load favorites from PostgreSQL when user logs in, falling back to local cache
   useEffect(() => {
+    let mounted = true;
     try {
       const stored = localStorage.getItem(storageKey);
       if (stored) {
@@ -33,7 +35,28 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } catch {
       setFavorites([]);
     }
-  }, [storageKey]);
+
+    if (user) {
+      UserAPI.getFavorites(user.email, token || undefined)
+        .then((remoteFavs) => {
+          if (mounted && remoteFavs && remoteFavs.length > 0) {
+            setFavorites(remoteFavs);
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(remoteFavs));
+            } catch {
+              // ignore
+            }
+          }
+        })
+        .catch(() => {
+          // backend offline fallback
+        });
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [storageKey, user, token]);
 
   // Persist to localStorage
   const saveFavorites = (newFavs: number[]) => {
@@ -63,9 +86,15 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (exists) {
       updated = favorites.filter((id) => id !== propertyId);
       showToast('Removed from your saved properties');
+      if (user) {
+        UserAPI.removeFavorite(propertyId, user.email, token || undefined).catch(() => {});
+      }
     } else {
       updated = [...favorites, propertyId];
       showToast('Saved to your favorites! ❤️');
+      if (user) {
+        UserAPI.addFavorite(propertyId, user.email, token || undefined).catch(() => {});
+      }
     }
 
     saveFavorites(updated);
@@ -76,6 +105,9 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const updated = favorites.filter((id) => id !== propertyId);
     saveFavorites(updated);
     showToast('Removed from your saved properties');
+    if (user) {
+      UserAPI.removeFavorite(propertyId, user.email, token || undefined).catch(() => {});
+    }
   };
 
   const clearFavorites = () => {

@@ -6,7 +6,7 @@ import { AIBrokerClient } from './aiBroker';
 import { ChatMessage, ValuationData } from '../types/ai';
 import { InquiryRequest, InquiryResponse } from '../types/inquiry';
 
-const API_BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
 const LOCAL_INQUIRIES_KEY = 'raylive_user_inquiries';
 const LOCAL_PROPERTIES_KEY = 'raylive_custom_properties';
 
@@ -311,5 +311,68 @@ export const PropertyAPI = {
     } catch (e) {
       console.error('Failed to save inquiry locally', e);
     }
+  }
+};
+
+export const UserAPI = {
+  async getFavorites(email?: string, token?: string): Promise<number[]> {
+    try {
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const url = email ? `${API_BASE}/users/favorites?email=${encodeURIComponent(email)}` : `${API_BASE}/users/favorites`;
+      const res = await fetch(url, { headers, signal: AbortSignal.timeout(2000) });
+      if (res.ok) {
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      }
+    } catch {
+      // offline fallback
+    }
+    return [];
+  },
+
+  async addFavorite(propertyId: number, email?: string, token?: string): Promise<number[] | null> {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const url = email ? `${API_BASE}/users/favorites/${propertyId}?email=${encodeURIComponent(email)}` : `${API_BASE}/users/favorites/${propertyId}`;
+      const res = await fetch(url, { method: 'POST', headers, signal: AbortSignal.timeout(2000) });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {
+      // offline
+    }
+    return null;
+  },
+
+  async removeFavorite(propertyId: number, email?: string, token?: string): Promise<number[] | null> {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const url = email ? `${API_BASE}/users/favorites/${propertyId}?email=${encodeURIComponent(email)}` : `${API_BASE}/users/favorites/${propertyId}`;
+      const res = await fetch(url, { method: 'DELETE', headers, signal: AbortSignal.timeout(2000) });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {
+      // offline
+    }
+    return null;
+  },
+
+  async getMyListings(email?: string, token?: string): Promise<Property[]> {
+    try {
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const url = email ? `${API_BASE}/users/my-listings?email=${encodeURIComponent(email)}` : `${API_BASE}/users/my-listings`;
+      const res = await fetch(url, { headers, signal: AbortSignal.timeout(2000) });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {
+      // offline
+    }
+    return [];
   }
 };

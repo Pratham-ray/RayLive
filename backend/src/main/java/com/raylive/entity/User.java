@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -39,6 +41,12 @@ public class User {
     private UserRole role = UserRole.BUYER;
 
     private String avatarUrl;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_favorites", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "property_id")
+    @Builder.Default
+    private Set<Long> favoritePropertyIds = new HashSet<>();
 
     @CreationTimestamp
     @Column(updatable = false)
