@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Building2, 
@@ -14,7 +14,12 @@ import {
   Eye,
   Camera,
   Layers,
-  ArrowLeft
+  ArrowLeft,
+  UploadCloud,
+  X,
+  ImagePlus,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { ListingType, PropertyType, Property } from '../types/property';
 import { CITIES } from '../data/mockProperties';
@@ -50,7 +55,10 @@ export const SellPropertyPage: React.FC = () => {
   const [bathrooms, setBathrooms] = useState('2');
   const [furnishingStatus, setFurnishingStatus] = useState<'Unfurnished' | 'Semi-Furnished' | 'Fully-Furnished'>('Semi-Furnished');
   const [askingPrice, setAskingPrice] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [imageUrlInput, setImageUrlInput] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([
     'Gated Society',
     'Power Backup',
@@ -74,6 +82,48 @@ export const SellPropertyPage: React.FC = () => {
       if (!contactPhone && user.phone) setContactPhone(user.phone);
     }
   }, [user]);
+
+  const handleFiles = (files: FileList | null) => {
+    if (!files) return;
+    const validFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setUploadedImages(prev => [...prev, e.target!.result as string]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
+  const handleAddImageUrl = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (imageUrlInput.trim()) {
+      setUploadedImages(prev => [...prev, imageUrlInput.trim()]);
+      setImageUrlInput('');
+    }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setUploadedImages(prev => prev.filter((_, idx) => idx !== indexToRemove));
+  };
 
   // Instant AI Price Valuation calculation for the owner
   const area = Number(areaSqFt) || 1200;
@@ -122,7 +172,7 @@ export const SellPropertyPage: React.FC = () => {
         state: city === 'Mumbai' || city === 'Pune' ? 'Maharashtra' : city === 'Hyderabad' ? 'Telangana' : 'Karnataka',
         pincode: '560001',
         amenities: selectedAmenities,
-        images: imageUrl.trim() ? [imageUrl.trim()] : [defaultImage],
+        images: uploadedImages.length > 0 ? uploadedImages : [defaultImage],
         contactName: contactName.trim() || user?.name || 'Property Owner',
         contactPhone: contactPhone.trim() || '+91 98765 43210',
         contactEmail: contactEmail.trim() || user?.email || 'owner@raylive.in'
@@ -419,21 +469,100 @@ export const SellPropertyPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Photo Link Input (Optional) */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Property Cover Photo URL (Optional)
-                </label>
-                <div className="relative">
-                  <Camera className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                  <input
-                    type="url"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/... (or leave blank for premium architectural photography)"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-xs focus:outline-none focus:border-gold-500 focus:bg-white"
-                  />
+              {/* Drag-and-Drop Image Uploader */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Property Photos ({uploadedImages.length})
+                  </label>
+                  <span className="text-[11px] text-slate-400">
+                    PNG, JPG, WEBP (First photo is cover)
+                  </span>
                 </div>
+
+                {/* Drag & Drop Area */}
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
+                    isDragging
+                      ? 'border-gold-500 bg-amber-50/50 scale-[1.01]'
+                      : 'border-slate-300 hover:border-gold-400 bg-slate-50/60 hover:bg-slate-50'
+                  }`}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => handleFiles(e.target.files)}
+                    className="hidden"
+                  />
+                  <div className="w-12 h-12 rounded-2xl bg-amber-100/70 text-amber-700 flex items-center justify-center mx-auto mb-2">
+                    <UploadCloud className="w-6 h-6" />
+                  </div>
+                  <p className="text-xs font-bold text-navy-950">
+                    Drag and drop photos here, or <span className="text-amber-600 underline">browse files</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Upload multiple high-resolution photos of living room, bedrooms, kitchen, and exterior
+                  </p>
+                </div>
+
+                {/* Add Image by URL option */}
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Camera className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                    <input
+                      type="url"
+                      value={imageUrlInput}
+                      onChange={(e) => setImageUrlInput(e.target.value)}
+                      placeholder="Or paste an image web link (URL)"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:border-gold-500 focus:bg-white"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddImageUrl}
+                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Link</span>
+                  </button>
+                </div>
+
+                {/* Uploaded Photos Grid Preview */}
+                {uploadedImages.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    {uploadedImages.map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="group relative rounded-xl overflow-hidden aspect-[4/3] bg-slate-100 border border-slate-200 shadow-xs"
+                      >
+                        <img
+                          src={img}
+                          alt={`Uploaded preview ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        {idx === 0 && (
+                          <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-navy-950/90 text-gold-400 text-[10px] font-black uppercase tracking-wider backdrop-blur-xs">
+                            Cover Photo
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeImage(idx)}
+                          className="absolute top-1.5 right-1.5 p-1 rounded-lg bg-black/60 hover:bg-red-600 text-white transition-colors cursor-pointer opacity-90 group-hover:opacity-100"
+                          title="Remove photo"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Contact Information */}

@@ -9,7 +9,8 @@ import {
   X,
   Compass,
   LogIn,
-  Heart
+  Heart,
+  Inbox
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -192,6 +193,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAIBroker }) => {
                     >
                       <Compass className="w-4 h-4 text-gold-600" />
                       <span>My Scheduled Tours</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        navigate('/agent-inbox');
+                      }}
+                      className="w-full px-4 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                    >
+                      <Inbox className="w-4 h-4 text-amber-600" />
+                      <span>Owner / Agent Inbox</span>
                     </button>
 
                     <button

@@ -10,6 +10,7 @@ import { ExplorePage } from './pages/ExplorePage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
 import { FavoritesPage } from './pages/FavoritesPage';
 import { BookingsPage } from './pages/BookingsPage';
+import { AgentInboxPage } from './pages/AgentInboxPage';
 import { SellPropertyPage } from './pages/SellPropertyPage';
 import { AgentsPage } from './pages/AgentsPage';
 import { LoginPage } from './pages/LoginPage';
@@ -54,6 +55,9 @@ export const App: React.FC = () => {
 
                 {/* Tour Bookings & Visits */}
                 <Route path="/bookings" element={<BookingsPage onOpenAIBroker={handleOpenAIBroker} />} />
+
+                {/* Agent & Owner Lead Inbox */}
+                <Route path="/agent-inbox" element={<AgentInboxPage onOpenAIBroker={handleOpenAIBroker} />} />
 
                 {/* Explore & Property Discovery */}
                 <Route path="/explore" element={<ExplorePage onOpenAIBroker={handleOpenAIBroker} />} />
