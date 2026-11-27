@@ -94,23 +94,23 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] bg-white shadow-2xl flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+    <div className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[340px] h-[440px] max-h-[75vh] rounded-2xl bg-white shadow-2xl flex flex-col border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
       
       {/* Header */}
-      <div className="bg-navy-900 text-white p-4 border-b border-navy-800 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-gold-500 to-amber-300 flex items-center justify-center text-navy-950 font-bold shadow-md shadow-gold-500/20">
-            <Sparkles className="w-5 h-5 text-navy-950" />
+      <div className="bg-navy-900 text-white px-3.5 py-2.5 border-b border-navy-800 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-gold-500 to-amber-300 flex items-center justify-center text-navy-950 font-bold shadow-md shadow-gold-500/20">
+            <Sparkles className="w-4 h-4 text-navy-950" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-extrabold text-base tracking-tight text-white">RayBroker AI</h3>
+            <div className="flex items-center gap-1.5">
+              <h3 className="font-extrabold text-sm tracking-tight text-white">RayBroker AI</h3>
               <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 Active
               </span>
             </div>
-            <p className="text-xs text-slate-400">Personal Real Estate & Price Intelligence Consultant</p>
+            <p className="text-[11px] text-slate-400 leading-tight">Property & Price Advisor</p>
           </div>
         </div>
 
@@ -119,9 +119,10 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
             if (onClearTargetProperty) onClearTargetProperty();
             onClose();
           }}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800 transition-colors"
+          className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800 transition-colors"
+          aria-label="Close RayBroker AI"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
       </div>
 
@@ -142,7 +143,7 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
       )}
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/70">
+      <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-50/70">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -165,7 +166,7 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
 
             {/* Bubble */}
             <div
-              className={`max-w-[90%] rounded-2xl p-4 text-sm shadow-sm leading-relaxed ${
+              className={`max-w-[90%] rounded-2xl p-3 text-xs shadow-sm leading-relaxed ${
                 msg.sender === 'user'
                   ? 'bg-navy-900 text-white rounded-tr-none'
                   : 'bg-white border border-slate-200/90 text-slate-800 rounded-tl-none'
@@ -272,7 +273,7 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
       </div>
 
       {/* Input Bar */}
-      <div className="p-3 bg-white border-t border-slate-200">
+      <div className="p-2.5 bg-white border-t border-slate-200">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -284,20 +285,17 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about properties, fair prices, or EMI..."
-            className="flex-1 bg-slate-100 hover:bg-slate-50 focus:bg-white text-sm px-4 py-2.5 rounded-xl border border-slate-200 focus:border-gold-500 focus:outline-none transition-colors"
+            placeholder="Ask about prices or EMI..."
+            className="flex-1 bg-slate-100 hover:bg-slate-50 focus:bg-white text-xs px-3 py-2 rounded-xl border border-slate-200 focus:border-gold-500 focus:outline-none transition-colors"
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="p-2.5 rounded-xl bg-navy-900 text-gold-400 hover:bg-navy-850 disabled:opacity-50 transition-colors shadow-md flex items-center justify-center"
+            className="p-2 rounded-xl bg-navy-900 text-gold-400 hover:bg-navy-850 disabled:opacity-50 transition-colors shadow-md flex items-center justify-center"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-3.5 h-3.5" />
           </button>
         </form>
-        <p className="text-[10px] text-slate-400 text-center mt-1.5">
-          Powered by RayLive Property Intelligence Engine · Instant Fair Price Benchmarking
-        </p>
       </div>
 
     </div>
