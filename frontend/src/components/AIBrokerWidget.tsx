@@ -94,10 +94,10 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[285px] h-[350px] max-h-[60vh] rounded-2xl bg-white flex flex-col border-2 ai-border-glow ai-glow overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
+    <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-2rem)] sm:w-[320px] h-[360px] max-h-[60vh] rounded-2xl bg-white flex flex-col border-2 ai-border-glow ai-glow overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
       
       {/* Header */}
-      <div className="bg-navy-900 text-white px-3 py-2 border-b border-navy-800 flex items-center justify-between ai-shine">
+      <div className="relative bg-navy-900 text-white px-3 py-2 border-b border-navy-800 flex items-center justify-between ai-shine">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-gold-500 to-amber-300 flex items-center justify-center text-navy-950 font-bold shadow-md shadow-gold-500/30">
             <Sparkles className="w-3.5 h-3.5 text-navy-950 animate-pulse" />

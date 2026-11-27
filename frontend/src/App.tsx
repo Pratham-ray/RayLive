@@ -74,7 +74,7 @@ export const App: React.FC = () => {
             {!aiBrokerOpen && (
               <button
                 onClick={() => handleOpenAIBroker()}
-                className="fixed bottom-4 right-4 z-40 px-3.5 py-2 rounded-full bg-gradient-to-r from-navy-950 via-navy-900 to-navy-950 text-gold-400 border border-gold-400/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group cursor-pointer ai-glow ai-shine"
+                className="fixed bottom-6 right-6 z-40 px-3.5 py-2 rounded-full bg-gradient-to-r from-navy-950 via-navy-900 to-navy-950 text-gold-400 border border-gold-400/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group cursor-pointer ai-glow ai-shine"
                 aria-label="Open RayBroker AI Assistant"
               >
                 <div className="relative">
