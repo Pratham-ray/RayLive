@@ -94,23 +94,23 @@ export const AIBrokerWidget: React.FC<AIBrokerWidgetProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[340px] h-[440px] max-h-[75vh] rounded-2xl bg-white shadow-2xl flex flex-col border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
+    <div className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] sm:w-[285px] h-[350px] max-h-[60vh] rounded-2xl bg-white flex flex-col border-2 ai-border-glow ai-glow overflow-hidden animate-in slide-in-from-bottom-4 duration-200">
       
       {/* Header */}
-      <div className="bg-navy-900 text-white px-3.5 py-2.5 border-b border-navy-800 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-gold-500 to-amber-300 flex items-center justify-center text-navy-950 font-bold shadow-md shadow-gold-500/20">
-            <Sparkles className="w-4 h-4 text-navy-950" />
+      <div className="bg-navy-900 text-white px-3 py-2 border-b border-navy-800 flex items-center justify-between ai-shine">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-gold-500 to-amber-300 flex items-center justify-center text-navy-950 font-bold shadow-md shadow-gold-500/30">
+            <Sparkles className="w-3.5 h-3.5 text-navy-950 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h3 className="font-extrabold text-sm tracking-tight text-white">RayBroker AI</h3>
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1">
+              <h3 className="font-extrabold text-xs tracking-tight text-white">RayBroker AI</h3>
+              <span className="text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold px-1.5 py-0.2 rounded-full flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 Active
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-tight">Property & Price Advisor</p>
+            <p className="text-[10px] text-slate-400 leading-tight">Price & Deal Advisor</p>
           </div>
         </div>
 

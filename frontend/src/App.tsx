@@ -74,16 +74,16 @@ export const App: React.FC = () => {
             {!aiBrokerOpen && (
               <button
                 onClick={() => handleOpenAIBroker()}
-                className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-navy-950 via-navy-900 to-navy-950 text-gold-400 border border-gold-500/50 shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2.5 group cursor-pointer ai-glow"
+                className="fixed bottom-4 right-4 z-40 px-3.5 py-2 rounded-full bg-gradient-to-r from-navy-950 via-navy-900 to-navy-950 text-gold-400 border border-gold-400/70 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group cursor-pointer ai-glow ai-shine"
                 aria-label="Open RayBroker AI Assistant"
               >
                 <div className="relative">
-                  <Sparkles className="w-5 h-5 text-gold-400 group-hover:rotate-12 transition-transform" />
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                  <Sparkles className="w-4 h-4 text-gold-400 group-hover:rotate-12 transition-transform" />
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
                 </div>
                 <div className="text-left hidden sm:block">
-                  <p className="text-xs font-black tracking-tight text-white leading-none">RayBroker AI</p>
-                  <p className="text-[10px] text-gold-400 font-semibold leading-tight">Price & Deal Advisor</p>
+                  <p className="text-[11px] font-black tracking-tight text-white leading-none">RayBroker AI</p>
+                  <p className="text-[9px] text-gold-400 font-semibold leading-tight">Price & Deal Advisor</p>
                 </div>
               </button>
             )}
